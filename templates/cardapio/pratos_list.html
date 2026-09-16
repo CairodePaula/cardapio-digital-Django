@@ -6,6 +6,7 @@
 {% for prato in pratos %}
     <div class="card">
         <strong>{{ prato.nome }}</strong> — R$ {{ prato.preco }}
+        <p>{{ prato.get_tipo_display }} · {{ prato.get_categoria_display }}</p>
         <p>{{ prato.descricao }}</p>
     </div>
 {% empty %}

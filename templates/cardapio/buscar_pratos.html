@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Buscar pratos{% endblock %}
+{% block content %}
+<h1>Buscar pratos</h1>
+
+<form method="get">
+    <p>
+        <label>Nome:
+            <input type="text" name="nome" value="{{ filtros.nome }}" placeholder="ex: feijoada">
+        </label>
+    </p>
+    <p>
+        <label>Tipo:
+            <select name="tipo">
+                <option value="">Todos</option>
+                {% for valor, rotulo in tipos %}
+                    <option value="{{ valor }}" {% if filtros.tipo == valor %}selected{% endif %}>{{ rotulo }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    </p>
+    <p>
+        <label>Categoria:
+            <select name="categoria">
+                <option value="">Todas</option>
+                {% for valor, rotulo in categorias %}
+                    <option value="{{ valor }}" {% if filtros.categoria == valor %}selected{% endif %}>{{ rotulo }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    </p>
+    <button class="btn" type="submit">Buscar</button>
+</form>
+
+<h2>Resultados</h2>
+{% for prato in pratos %}
+    <div class="card">
+        <strong>{{ prato.nome }}</strong> — R$ {{ prato.preco }}
+        <p>{{ prato.get_tipo_display }} · {{ prato.get_categoria_display }}</p>
+        <p>{{ prato.descricao }}</p>
+    </div>
+{% empty %}
+    <p>Nenhum prato encontrado com esses filtros.</p>
+{% endfor %}
+{% endblock %}
