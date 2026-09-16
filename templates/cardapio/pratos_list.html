@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Pratos{% endblock %}
+{% block content %}
+<h1>Pratos disponíveis</h1>
+
+{% for prato in pratos %}
+    <div class="card">
+        <strong>{{ prato.nome }}</strong> — R$ {{ prato.preco }}
+        <p>{{ prato.descricao }}</p>
+    </div>
+{% empty %}
+    <p>Nenhum prato cadastrado ainda.</p>
+{% endfor %}
+{% endblock %}

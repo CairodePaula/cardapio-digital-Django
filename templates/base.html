@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <!-- Cada página (pratos_list.html, mesas_list.html, etc.) define seu
+         próprio título preenchendo este bloco "title". Se uma página não
+         definir, cai no valor padrão "Cardápio Digital" abaixo. -->
+    <title>{% block title %}Cardápio Digital{% endblock %}</title>
+    <style>
+        /* Layout geral da página (largura máxima, fonte, espaçamento) */
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 30px auto; padding: 0 15px; color: #222; }
+
+        /* Menu de navegação no topo (Pratos / Combos / Mesas) */
+        nav { margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #333; }
+        nav a { margin-right: 15px; text-decoration: none; color: #333; font-weight: bold; }
+
+        /* Tabelas (lista de mesas, itens da comanda) */
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background: #333; color: #fff; }
+
+        /* "Card" usado para mostrar cada prato/combo na listagem */
+        .card { border: 1px solid #ddd; border-radius: 6px; padding: 15px; margin-bottom: 12px; }
+
+        /* Botões: .btn é o padrão (preto); .btn-danger é usado em ações
+           que "destroem" algo (remover item, fechar comanda) */
+        .btn { display: inline-block; background: #333; color: #fff; padding: 6px 12px; border: none;
+               border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 14px; }
+        .btn-danger { background: #a33; }
+
+        /* Caixa de mensagem de sucesso (ex: "Comanda aberta para a Mesa 1") */
+        .msg { padding: 10px; margin-bottom: 15px; border-radius: 4px; }
+        .msg-success { background: #d4edda; color: #155724; }
+
+        /* Linha do total, no fim da comanda */
+        .total { font-size: 1.3em; font-weight: bold; margin-top: 15px; }
+
+        /* form.inline deixa um <form> ocupar só o espaço do botão dele,
+           em vez de quebrar linha — usado nas colunas "Ação" da tabela
+           de itens (atualizar quantidade / remover), onde cada linha
+           tem um form pequeno dentro de uma célula da tabela. */
+        form.inline { display: inline; }
+        input[type=number] { width: 60px; }
+    </style>
+</head>
+<body>
+    <!-- Navegação fixa em todas as páginas: os links usam a tag "url" do
+         Django (que resolve o nome da rota) em vez de um endereço fixo
+         como /cardapio/pratos/, para não quebrar se algum dia mudarmos o
+         prefixo das rotas no urls.py -->
+    <nav>
+        <a href="{% url 'cardapio:lista_pratos' %}">Pratos</a>
+        <a href="{% url 'cardapio:lista_combos' %}">Combos</a>
+        <a href="{% url 'restaurante:lista_mesas' %}">Mesas</a>
+    </nav>
+
+    <!-- Mensagens do django.contrib.messages: toda vez que uma view chama
+         messages.success(...), o texto aparece aqui em cima na próxima
+         página carregada (ex: "Comanda aberta para a Mesa 1"). -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="msg msg-success">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Cada página preenche este bloco com o conteúdo específico dela
+         (a lista de pratos, a tabela de mesas, os itens da comanda...) -->
+    {% block content %}{% endblock %}
+</body>
+</html>
