@@ -1,12 +1,41 @@
+from django.db.models import Q
 from django.shortcuts import render
 from .models import Prato, Combo
 
 
 def lista_pratos(request):
-    # .filter(disponivel=True) usa o ORM para trazer do banco
-    # somente os pratos marcados como disponiveis.
-    pratos = Prato.objects.filter(disponivel=True)
-    return render(request, 'cardapio/pratos_list.html', {'pratos': pratos})
+    """
+    Listagem principal de pratos.
+
+    Feature 1 (busca e filtro):
+    - 'q' filtra por nome do prato (case-insensitive).
+    - 'categoria' filtra por categoria (Entrada / Prato Principal /
+      Sobremesa / Bebida).
+    Os dois parametros podem ser usados juntos ou separadamente, e sao
+    combinados com Q() numa unica consulta (desafio extra do enunciado).
+    A listagem continua so mostrando pratos disponiveis (regra ja
+    existente antes da feature).
+    """
+    termo_busca = request.GET.get('q', '').strip()
+    categoria_selecionada = request.GET.get('categoria', '')
+
+    filtros = Q(disponivel=True)
+
+    if termo_busca:
+        filtros &= Q(nome__icontains=termo_busca)
+
+    if categoria_selecionada:
+        filtros &= Q(categoria=categoria_selecionada)
+
+    pratos = Prato.objects.filter(filtros).order_by('nome')
+
+    contexto = {
+        'pratos': pratos,
+        'termo_busca': termo_busca,
+        'categoria_selecionada': categoria_selecionada,
+        'categorias': Prato.CATEGORIA_CHOICES,
+    }
+    return render(request, 'cardapio/pratos_list.html', contexto)
 
 
 def lista_combos(request):
