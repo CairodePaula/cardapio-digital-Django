@@ -6,6 +6,7 @@ class Prato(models.Model):
     Um item individual do cardapio (ex: 'Feijoada', 'Suco de Laranja').
     """
 
+    # --- Constantes do seu codigo atual (HEAD) ---
     TIPO_ENTRADA = 'entrada'
     TIPO_PRINCIPAL = 'principal'
     TIPO_SOBREMESA = 'sobremesa'
@@ -19,26 +20,33 @@ class Prato(models.Model):
         (TIPO_ACOMPANHAMENTO, 'Acompanhamento'),
     ]
 
-    CATEGORIA_BRASILEIRA = 'brasileira'
-    CATEGORIA_ITALIANA = 'italiana'
-    CATEGORIA_JAPONESA = 'japonesa'
-    CATEGORIA_VEGETARIANA = 'vegetariana'
-    CATEGORIA_VEGANA = 'vegana'
-    CATEGORIA_OUTRA = 'outra'
+    # --- Constantes exigidas pelo Patch (Feature 1) ---
+    CATEGORIA_ENTRADA = 'entrada'
+    CATEGORIA_PRATO_PRINCIPAL = 'prato_principal'
+    CATEGORIA_SOBREMESA = 'sobremesa'
+    CATEGORIA_BEBIDA = 'bebida'
     CATEGORIA_CHOICES = [
-        (CATEGORIA_BRASILEIRA, 'Brasileira'),
-        (CATEGORIA_ITALIANA, 'Italiana'),
-        (CATEGORIA_JAPONESA, 'Japonesa'),
-        (CATEGORIA_VEGETARIANA, 'Vegetariana'),
-        (CATEGORIA_VEGANA, 'Vegana'),
-        (CATEGORIA_OUTRA, 'Outra'),
+        (CATEGORIA_ENTRADA, 'Entrada'),
+        (CATEGORIA_PRATO_PRINCIPAL, 'Prato Principal'),
+        (CATEGORIA_SOBREMESA, 'Sobremesa'),
+        (CATEGORIA_BEBIDA, 'Bebida'),
     ]
 
     nome = models.CharField(max_length=100)
     descricao = models.TextField(blank=True)
+    
+    # Campo "categoria" exigido pelo patch 0001
+    categoria = models.CharField(
+        max_length=20,
+        choices=CATEGORIA_CHOICES,
+        default=CATEGORIA_PRATO_PRINCIPAL,
+    )
+    
     preco = models.DecimalField(max_digits=8, decimal_places=2)
+    
+    # Campo "tipo" preservado do seu codigo original
     tipo = models.CharField(max_length=20, choices=TIPO_CHOICES, default=TIPO_PRINCIPAL)
-    categoria = models.CharField(max_length=20, choices=CATEGORIA_CHOICES, default=CATEGORIA_OUTRA)
+    
     disponivel = models.BooleanField(default=True)
 
     def __str__(self):
