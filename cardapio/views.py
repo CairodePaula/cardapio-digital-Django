@@ -1,6 +1,8 @@
 from django.db.models import Q
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib import messages
 from .models import Prato, Combo
+from .forms import PratoForm
 
 
 def lista_pratos(request):
@@ -69,3 +71,22 @@ def buscar_pratos(request):
         'filtros': {'nome': nome, 'tipo': tipo, 'categoria': categoria},
     }
     return render(request, 'cardapio/buscar_pratos.html', contexto)
+
+
+def cadastrar_prato(request):
+    """
+    Cadastro de prato via formulario no site (antes so existia pelo
+    Django Admin). E aqui que a Feature 2 (validacao customizada do
+    preco) e exercitada: se o preco for <= 0, o form volta com o erro
+    e o template mostra a mensagem automaticamente via {{ form.as_p }}.
+    """
+    if request.method == 'POST':
+        form = PratoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Prato cadastrado com sucesso.')
+            return redirect('cardapio:lista_pratos')
+    else:
+        form = PratoForm()
+
+    return render(request, 'cardapio/prato_form.html', {'form': form})

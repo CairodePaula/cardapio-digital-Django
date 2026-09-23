@@ -3,6 +3,8 @@
 {% block content %}
 <h1>Pratos disponíveis</h1>
 
+<a class="btn" href="{% url 'cardapio:cadastrar_prato' %}">+ Novo prato</a>
+
 <!-- Feature 1: busca por nome + filtro por categoria.
      method="get" para os filtros ficarem na própria URL (podem ser
      compartilhados/recarregados) e serem lidos com request.GET.get(). -->
