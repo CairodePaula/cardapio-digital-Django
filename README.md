@@ -1,6 +1,6 @@
 # Cardápio Digital com Comanda por Mesa
 
-Projeto acadêmico em Django + PostgreSQL. Implementa o **P1**: cadastro de
+Projeto acadêmico em Django + SQLite. Implementa o **P1**: cadastro de
 pratos, combos e mesas; abertura de comanda; adição de itens; alteração de
 quantidade; cálculo de subtotal/total; fechamento da conta.
 
@@ -24,17 +24,16 @@ source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-Crie o banco no PostgreSQL e copie o `.env.example` para `.env`, ajustando usuário/senha:
+Copie o `.env.example` para `.env` e ajuste a `SECRET_KEY`:
 
-```sql
-CREATE DATABASE cardapio_db;
-```
 ```bash
 cp .env.example .env
 python manage.py migrate
 python manage.py createsuperuser   # para acessar o Admin
 python manage.py runserver
 ```
+
+O Django cria o arquivo `db.sqlite3` automaticamente na primeira migração — não precisa instalar nem configurar nenhum banco separado.
 
 ## Como usar o sistema
 
@@ -62,7 +61,6 @@ python manage.py runserver
 
 - **Faltando o Django / erro de import:** esqueceu de ativar o venv (`source venv/bin/activate`). Confira se o prompt mostra `(venv)`.
 - **Erro lendo `SECRET_KEY`:** rode os comandos de dentro de `cardapio_digital/cardapio_digital/`, onde ficam `manage.py` e `.env`.
-- **Erro de conexão com o banco:** confirme se o serviço do PostgreSQL está rodando (`pg_ctl status` ou `sudo service postgresql status`).
 - **"Address already in use" na porta 8000:** feche o servidor antigo ou rode em outra porta: `python manage.py runserver 8001`.
 - **Erro 405 no logout do admin:** use o botão "Sair" da tela do admin em vez de digitar `/admin/logout/` direto na URL (ela só aceita POST).
 
