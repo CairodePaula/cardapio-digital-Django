@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Novo prato{% endblock %}
+{% block content %}
+<h1>Novo prato</h1>
+
+<!-- Feature 2: validação customizada. Se o clean_preco() do PratoForm
+     levantar ValidationError, {{ form.as_p }} já mostra a mensagem de
+     erro ao lado do campo automaticamente, sem código extra aqui. -->
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn" type="submit">Salvar</button>
+</form>
+
+<p><a href="{% url 'cardapio:lista_pratos' %}">Voltar para a lista de pratos</a></p>
+{% endblock %}

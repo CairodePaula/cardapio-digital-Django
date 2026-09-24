@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Pratos{% endblock %}
+{% block content %}
+<h1>Pratos disponíveis</h1>
+
+<a class="btn" href="{% url 'cardapio:cadastrar_prato' %}">+ Novo prato</a>
+
+<!-- Feature 1: busca por nome + filtro por categoria.
+     method="get" para os filtros ficarem na própria URL (podem ser
+     compartilhados/recarregados) e serem lidos com request.GET.get(). -->
+<form method="get" style="margin: 15px 0;">
+    <input
+        type="text"
+        name="q"
+        placeholder="Buscar prato pelo nome..."
+        value="{{ termo_busca }}">
+
+    <select name="categoria">
+        <option value="" {% if categoria_selecionada == '' %}selected{% endif %}>Todas as categorias</option>
+        {% for valor, rotulo in categorias %}
+            <option value="{{ valor }}" {% if categoria_selecionada == valor %}selected{% endif %}>{{ rotulo }}</option>
+        {% endfor %}
+    </select>
+
+    <button class="btn" type="submit">Filtrar</button>
+    <a href="{% url 'cardapio:lista_pratos' %}">Limpar filtros</a>
+</form>
+
+{% for prato in pratos %}
+    <div class="card">
+        <strong>{{ prato.nome }}</strong> — R$ {{ prato.preco }}
+        <small>({{ prato.get_categoria_display }})</small>
+        <p>{{ prato.descricao }}</p>
+    </div>
+{% empty %}
+    {% if termo_busca or categoria_selecionada %}
+        <p>Nenhum prato encontrado para os filtros aplicados.</p>
+    {% else %}
+        <p>Nenhum prato disponível no momento.</p>
+    {% endif %}
+{% endfor %}
+{% endblock %}

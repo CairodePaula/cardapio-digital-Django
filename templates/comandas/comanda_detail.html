@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Comanda #{{ comanda.id }}{% endblock %}
+{% block content %}
+<h1>Comanda #{{ comanda.id }} - {{ comanda.mesa }}</h1>
+{# get_status_display() é método automático do Django pra campos com
+   "choices" no model (comanda.status guarda 'aberta'/'fechada', mas
+   get_status_display() mostra o rótulo bonito: 'Aberta'/'Fechada') #}
+<p>Status: <strong>{{ comanda.get_status_display }}</strong></p>
+
+{# Tabela com um <form> por linha para cada ação (atualizar qtd / remover).
+   Só aparecem esses forms se a comanda ainda estiver aberta -
+   depois de fechada, a linha vira só texto (sem edição). #}
+<h2>Itens</h2>
+<table>
+    <tr><th>Item</th><th>Qtd</th><th>Preço unit.</th><th>Subtotal</th><th></th></tr>
+    {% for item in itens %}
+    <tr>
+        <td>{{ item.nome_item }}</td>
+        <td>
+            {% if comanda.status == 'aberta' %}
+            <form class="inline" method="post" action="{% url 'comandas:alterar_quantidade' item.id %}">
+                {% csrf_token %}
+                <input type="number" name="quantidade" min="1" value="{{ item.quantidade }}">
+                <button class="btn" type="submit">Atualizar</button>
+            </form>
+            {% else %}
+                {{ item.quantidade }}
+            {% endif %}
+        </td>
+        <td>R$ {{ item.preco_unitario }}</td>
+        <td>R$ {{ item.subtotal }}</td>
+        <td>
+            {% if comanda.status == 'aberta' %}
+            <form class="inline" method="post" action="{% url 'comandas:remover_item' item.id %}">
+                {% csrf_token %}
+                <button class="btn btn-danger" type="submit">Remover</button>
+            </form>
+            {% endif %}
+        </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">Nenhum item adicionado ainda.</td></tr>
+    {% endfor %}
+</table>
+
+<p class="total">Total: R$ {{ comanda.total }}</p>
+
+{# Formulários de adicionar prato/combo e o botão de fechar conta só
+   fazem sentido enquanto a comanda está aberta - por isso tudo daqui
+   pra baixo fica dentro deste bloco condicional #}
+{% if comanda.status == 'aberta' %}
+
+    <h2>Adicionar prato</h2>
+    <form method="post" action="{% url 'comandas:adicionar_prato' comanda.id %}">
+        {% csrf_token %}
+        {{ form_prato.as_p }}
+        <button class="btn" type="submit">Adicionar prato</button>
+    </form>
+
+    <h2>Adicionar combo</h2>
+    <form method="post" action="{% url 'comandas:adicionar_combo' comanda.id %}">
+        {% csrf_token %}
+        {{ form_combo.as_p }}
+        <button class="btn" type="submit">Adicionar combo</button>
+    </form>
+
+    <h2>Fechar conta</h2>
+    <form method="post" action="{% url 'comandas:fechar_comanda' comanda.id %}"
+          onsubmit="return confirm('Confirma o fechamento da conta?');">
+        {% csrf_token %}
+        <button class="btn btn-danger" type="submit">Fechar comanda</button>
+    </form>
+
+{% else %}
+    <p><strong>Esta comanda está fechada.</strong> Fechada em: {{ comanda.fechada_em }}</p>
+{% endif %}
+
+{% endblock %}

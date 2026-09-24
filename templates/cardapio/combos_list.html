@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Combos{% endblock %}
+{% block content %}
+<h1>Combos disponíveis</h1>
+
+{% for combo in combos %}
+    <div class="card">
+        <strong>{{ combo.nome }}</strong> — R$ {{ combo.preco }}
+        <p>{{ combo.descricao }}</p>
+        <small>Inclui: {% for prato in combo.pratos.all %}{{ prato.nome }}{% if not forloop.last %}, {% endif %}{% endfor %}</small>
+    </div>
+{% empty %}
+    <p>Nenhum combo cadastrado ainda.</p>
+{% endfor %}
+{% endblock %}
